@@ -1,0 +1,20 @@
+load("@io_bazel_rules_docker//container:bundle.bzl", "container_bundle")
+load("@io_bazel_rules_docker//go:image.bzl", "go_image")
+load("@bazel_gazelle//:def.bzl", "gazelle")
+
+# gazelle:prefix github.com/christian-roggia/kubecon-bazel-telepresence
+
+gazelle(name = "gazelle")
+
+go_image(
+    name = "docker-image",
+    binary = "//cmd/demo:demo",
+    visibility = ["//visibility:public"],
+)
+
+container_bundle(
+    name = "register-image",
+    images = {
+        "k8s.io/kubecon-bazel-telepresence:latest": ":docker-image",
+    },
+)
